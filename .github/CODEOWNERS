@@ -1,0 +1,4 @@
+# CODEOWNERSファイルは、コードの所有者を指定するためのファイル。
+# 例えば、そのファイルの変更がプルリクリクエストされると、レビュー依頼が送られてくる。
+# 公式 -> https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+*   @Kohei-Suzuki22
