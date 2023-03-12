@@ -23,6 +23,8 @@ permissions:
 
 env:
   TF_VERSION: 1.2.8
+  env.AWS_REGION: ap-northeast-1
+
 
 defaults:
   run:
@@ -45,6 +47,17 @@ jobs:
         # terraform fmtコマンド: tfファイルをフォーマットする。(実際にフォーマットしてくれる。)
         # -checkオプションをつけることでフォーマットする必要があることを示してくれる。(実際にフォーマットしてくれない。)
         run: terraform fmt -check
+      - name: configure aws credential
+        # github上でWS Credentialsを実装するためのアクション
+        # https://github.com/aws-actions/configure-aws-credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ securets.AWS_IAM_ROLE_ARN }}
+      - name: terraform init
+        run: terraform init -no-color
+
+
 
 
 
