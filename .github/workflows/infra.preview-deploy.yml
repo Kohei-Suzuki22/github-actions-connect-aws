@@ -22,8 +22,11 @@ permissions:
   contents: read
 
 env:
-  TF_VERSION: 1.2.8
   AWS_REGION: ap-northeast-1
+  TF_VERSION: 1.2.8
+  TF_PROJECT: tastylog
+  TF_ENVIRONMENT: dev
+
 
 
 defaults:
@@ -60,6 +63,20 @@ jobs:
       - name: terraform validate
         # terraform validate: tfファイルの構文が間違っていないかチェックできる。
         run: terraform validate -no-color
+      - name: teraform plan
+        # terraform plan 現在構成されているインフラ(つまりtfstateファイル)と 変更があるかどうかを確認できる。
+        # 引数として、terraform上で実行するための変数を渡している。
+        # -input=falseに設定しないと、inputを待ち続けることになるため、falseで設定する。(ワークフローが次に進まなくなるため)
+        # -detailed-exitcode: コマンド終了時に情報を返す。 0:差分なし。 1:エラー。 2:差分あり
+        run: | 
+          terraform plan \
+          -var project=${{ env.TF_PROJECT }} \
+          -var environment=${{ env.TF_ENVIRONMENT }} \
+          -var username=${{ env.MYSQL_USERNAME }} \
+          -var password=${{ env.MYSQL_PASSWORD }} \
+          -input=false \
+          -no-color \
+          -detailed-exitcode
 
 
 
