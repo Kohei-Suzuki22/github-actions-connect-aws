@@ -1,0 +1,31 @@
+name: "infra preview & deploy"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 10_infra/**
+      - .github/workflows/**
+  workflow_dispatch:
+
+# ワークフロー内で、権限が必要とされる場合(他アプリのAPIを使用するために、トークンを渡す・github内の機能をワークフロー内から指定するための権限)に指定することでデフォルトの権限を上書きすることができる。
+# ワークフロー直下で、「permisssions:」を指定することで、すべてのjobに対して権限の変更ができる。
+# ※ job内で指定することによって、そのjobのみで権限の上書きができる。
+permissions:
+  # id-token: write オープンIDコネクトを提供しているクラウドプロバイダ(例えばAWS)にjwtトークンを要求できるようになる。
+  # ※ 別途でクラウドプロバイダ(例えばAWS)側で、githubに対するopenID Connectを有効化する必要がある。
+  # https://docs.github.com/ja/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  # contents: リポジトリ内のリソース(ソースコード)に対する権限
+  # リポジトリ内のリソースをクラウドプロバイダにreadできる権限を渡す。
+  contents: read
+
+jobs:
+  preview:
+    name: "Preview"
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello World"
+
+
