@@ -42,6 +42,8 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
       - name: terraform format
+        # terraform fmtコマンド: tfファイルをフォーマットする。
+        # -checkオプションをつけることで、エラーとして、フォーマットする必要があることを示してくれる。
         run: terraform fmt -check
 
 
