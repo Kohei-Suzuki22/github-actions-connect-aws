@@ -40,6 +40,8 @@ jobs:
   preview:
     name: "Preview"
     runs-on: ubuntu-latest
+    outputs:
+      TF_PLAN_EXITCODE: ${{ steps.plan.outputs.exitcode }}
     steps:
       - name: checkout repository
         uses: actions/checkout@v3
@@ -64,6 +66,8 @@ jobs:
         # terraform validate: tfファイルの構文が間違っていないかチェックできる。
         run: terraform validate -no-color
       - name: teraform plan
+        id: plan
+        continue-on-error: true
         # terraform plan 現在構成されているインフラ(つまりtfstateファイル)と 変更があるかどうかを確認できる。
         # 引数として、terraform上で実行するための変数を渡している。
         # -input=falseに設定しないと、inputを待ち続けることになるため、falseで設定する。(ワークフローが次に進まなくなるため)
@@ -79,6 +83,37 @@ jobs:
           -input=false \
           -no-color \
           -detailed-exitcode
+      - name: slack notify
+        # actionsからslack通知するためのアクション
+        # palyloadは、slackに通知した際の、フォーマットを指定できる。
+        # フォーマットをカスタマイズできるwebアプリ -> https://app.slack.com/block-kit-builder/T04TJN5JDB4#%7B%22blocks%22:%5B%7B%22type%22:%22header%22,%22text%22:%7B%22type%22:%22plain_text%22,%22text%22:%22Github%20Actions%20connect%22,%22emoji%22:true%7D%7D,%7B%22type%22:%22section%22,%22text%22:%7B%22type%22:%22mrkdwn%22,%22text%22:%22hello%20World%20:ghost:%22%7D%7D%5D%7D
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: "C04TXBBNZ7B"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Github Actions connect",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+
 
 
 
