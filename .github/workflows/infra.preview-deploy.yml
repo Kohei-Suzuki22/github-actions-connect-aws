@@ -68,6 +68,8 @@ jobs:
         # 引数として、terraform上で実行するための変数を渡している。
         # -input=falseに設定しないと、inputを待ち続けることになるため、falseで設定する。(ワークフローが次に進まなくなるため)
         # -detailed-exitcode: コマンド終了時に情報を返す。 0:差分なし。 1:エラー。 2:差分あり
+        #   ※ exitcodeが0になるときは、(つまりshell実行のステータスコードが0になる場合)エラーなし。
+        #   ※ exitcodeが1,2になるときは、(つまりshell実行のステータスコードが1,2になる場合)エラーと見做されるので注意。
         run: | 
           terraform plan \
           -var project=${{ env.TF_PROJECT }} \
