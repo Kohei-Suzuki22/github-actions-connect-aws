@@ -53,7 +53,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ securets.AWS_IAM_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
       - name: terraform init
         run: terraform init -no-color
 
