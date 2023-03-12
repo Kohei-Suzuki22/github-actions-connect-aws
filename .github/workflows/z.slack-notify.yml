@@ -1,0 +1,40 @@
+name: "z Slack Notify"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  notify:
+    name: slack notify
+    runs-on: ubuntu-latest
+    steps:
+      - name: slack notify
+        # actionsからslack通知するためのアクション
+        # palyloadは、slackに通知した際の、フォーマットを指定できる。
+        # フォーマットをカスタマイズできるwebアプリ -> https://app.slack.com/block-kit-builder/T04TJN5JDB4#%7B%22blocks%22:%5B%7B%22type%22:%22header%22,%22text%22:%7B%22type%22:%22plain_text%22,%22text%22:%22Github%20Actions%20connect%22,%22emoji%22:true%7D%7D,%7B%22type%22:%22section%22,%22text%22:%7B%22type%22:%22mrkdwn%22,%22text%22:%22hello%20World%20:ghost:%22%7D%7D%5D%7D
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: "C04TXBBNZ7B"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Github Actions connect",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "hello World :ghost:"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
