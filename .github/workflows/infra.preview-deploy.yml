@@ -139,6 +139,7 @@ jobs:
       - name: terraform init
         run: terraform init -no-color
       - name: terraform apply
+        id: apply
         # terraform apply: インフラの変更を適用する。
         # -auto-applyを指定しなければ、承認のコマンド入力待ちになってしまうので、ワークフロー内では忘れずに設定すること。
         run: |
@@ -150,3 +151,33 @@ jobs:
             -input=false \
             -no-color \
             -auto-approve
+      - name: slack nofity
+        if: always()
+        # actionsからslack通知するためのアクション
+        # palyloadは、slackに通知した際の、フォーマットを指定できる。
+        # フォーマットをカスタマイズできるwebアプリ -> https://app.slack.com/block-kit-builder/T04TJN5JDB4#%7B%22blocks%22:%5B%7B%22type%22:%22header%22,%22text%22:%7B%22type%22:%22plain_text%22,%22text%22:%22Github%20Actions%20connect%22,%22emoji%22:true%7D%7D,%7B%22type%22:%22section%22,%22text%22:%7B%22type%22:%22mrkdwn%22,%22text%22:%22hello%20World%20:ghost:%22%7D%7D%5D%7D
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: "C04TXBBNZ7B"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Runner Finished: ${{ steps.apply.outcome }}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
