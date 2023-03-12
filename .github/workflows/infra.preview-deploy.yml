@@ -138,3 +138,14 @@ jobs:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
       - name: terraform init
         run: terraform init -no-color
+      - name: terraform apply
+        # terraform apply: インフラの変更を適用する。
+        run: |
+          terraform apply \
+            -var project=${{ env.TF_PROJECT }} \
+            -var environment=${{ env.TF_ENVIRONMENT }} \
+            -var username=${{ env.MYSQL_USERNAME }} \
+            -var password=${{ env.MYSQL_PASSWORD }} \
+            -input=false \
+            -no-color
+            -auto-approve
