@@ -29,6 +29,7 @@ env:
 defaults:
   run:
     shell: bash
+    # 各ステップを実行するディレクトリを指定。(わざわざmvしなくてもいい。)
     working-directory: "10_infra/"
 
 
@@ -56,6 +57,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
       - name: terraform init
         run: terraform init -no-color
+      - name: terraform validate
+        # terraform validate: tfファイルの構文が間違っていないかチェックできる。
+        run: terraform validate -no-color
 
 
 
