@@ -140,6 +140,7 @@ jobs:
         run: terraform init -no-color
       - name: terraform apply
         # terraform apply: インフラの変更を適用する。
+        # -auto-applyを指定しなければ、承認のコマンド入力待ちになってしまうので、ワークフロー内では忘れずに設定すること。
         run: |
           terraform apply \
             -var project=${{ env.TF_PROJECT }} \
@@ -147,5 +148,5 @@ jobs:
             -var username=${{ env.MYSQL_USERNAME }} \
             -var password=${{ env.MYSQL_PASSWORD }} \
             -input=false \
-            -no-color
+            -no-color \
             -auto-approve
